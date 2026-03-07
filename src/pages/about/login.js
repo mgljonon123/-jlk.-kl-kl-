@@ -1,4 +1,4 @@
-import "./login.css"
+import "./login.css";
 // h3 tag (Continue товч) -ийг сонгож байна
 const continueBtn = document.querySelector("h3");
 
@@ -23,6 +23,7 @@ continueBtn.addEventListener("click", function () {
   // @ тэмдэг байхгүй бөгөөд 3 тэмдэгтээс богино бол буруу гэж үзнэ
   if (value === "erdenedelgeruranbayr95@gmail.com") {
     alert(value + " - бүртгэл амжилттай!");
+    window.location.href = "home.html";
     return; // Цааш үргэлжлэхгүй
   } else {
     alert("Bruu gmail baina!");

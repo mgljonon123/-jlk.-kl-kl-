@@ -11,6 +11,7 @@ export default {
     index: "./src/index.js",
     home: "./src/pages/home/home.js",
     login: "./src/pages/about/login.js", // ← "login" болгох
+    "music-library": "./src/pages/home/music-library.js",
   },
   output: {
     filename: "[name].js",
@@ -28,7 +29,7 @@ export default {
     new HtmlWebpackPlugin({
       template: "./src/pages/home/home.html",
       filename: "home.html",
-      chunks: ["index", "home"], // ← "shared" байхгүй тул "index" болгов
+      chunks: ["index", "home", "music-library"], // ← "shared" байхгүй тул "index" болгов
     }),
     new HtmlWebpackPlugin({
       template: "./src/pages/about/login.html",
@@ -41,7 +42,7 @@ export default {
       directory: path.join(__dirname, "dist"),
     },
     compress: true,
-    port: 9000,
+    port: 4000,
     open: ["login.html"],
   },
 };

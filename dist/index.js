@@ -15,7 +15,7 @@
   \**********************/
 /***/ (() => {
 
-eval("// import _ from \"lodash\";\r\n// function component() {\r\n//   const element = document.createElement(\"div\");\r\n\r\n//   // Lodash, now imported by this script\r\n//   element.innerHTML = _.join([\"Hello\", \"webpack\"], \" \");\r\n\r\n//   return element;\r\n// }\r\n\r\n// document.body.appendChild(component());\r\n\n\n//# sourceURL=webpack://webpack-demo/./src/index.js?");
+eval("\n\n//# sourceURL=webpack://webpack-demo/./src/index.js?");
 
 /***/ })
 

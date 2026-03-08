@@ -94,3 +94,19 @@ p {
         font-size: 20px;
         margin-top: 15px;
 }
+
+.login .h5,
+.login a.h5 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+        font-size: 17px;
+        color: #1ed760;
+        text-decoration: none;
+        cursor: pointer;
+}
+
+.login a.h5:hover {
+        text-decoration: underline;
+}

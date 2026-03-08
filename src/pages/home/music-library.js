@@ -84,6 +84,27 @@ const navHome = document.querySelector(".haha:nth-child(1)"); // Home
 const navSave = document.querySelector(".haha:nth-child(2)"); // Save
 const navHeart = document.querySelector(".haha:nth-child(3)"); // Heart
 
+// Update counts in left nav (Save / Heart)
+function updateNavCounts() {
+  const savedCount = getSavedTracks().length;
+  const favoriteCount = getFavoriteTracks().length;
+
+  if (navSave) {
+    const label = navSave.querySelector("h1");
+    if (label) {
+      label.textContent = savedCount > 0 ? `Save (${savedCount})` : "Save";
+    }
+  }
+
+  if (navHeart) {
+    const label = navHeart.querySelector("h1");
+    if (label) {
+      label.textContent =
+        favoriteCount > 0 ? `Heart (${favoriteCount})` : "Heart";
+    }
+  }
+}
+
 // Section elements
 const savedTracksContainer = document.querySelector(".saved-tracks-container");
 const favoritesContainer = document.querySelector(".favorites-container");
@@ -233,6 +254,24 @@ if (searchInput && resultsContainer) {
     }
   }
 
+  // Search using iTunes API and automatically play the first result.
+  async function searchAndPlay(query) {
+    if (!query) return;
+
+    // Reflect query in the search input for UX
+    if (searchInput) {
+      searchInput.value = query;
+    }
+
+    await fetchMusic(query);
+
+    // Click the first track card to start playing
+    const firstCard = resultsContainer.querySelector(".duu.track-card");
+    if (firstCard) {
+      firstCard.click();
+    }
+  }
+
   function renderResults(tracks) {
     if (!tracks.length) {
       resultsContainer.innerHTML =
@@ -290,9 +329,33 @@ if (searchInput && resultsContainer) {
     favoritesContainer.addEventListener("click", handleTrackClick);
   }
 
+  // Make static Hip-hop / Emo / Chillout / Popular artists cards playable
+  const staticCards = document.querySelectorAll(
+    ".Popular .duu, .Hiphop .torol .duu, .bvh .chill, .artists .zee",
+  );
+
+  staticCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const titleEl = card.querySelector("h1");
+      const artistEl = card.querySelector("h2");
+
+      const title = titleEl ? titleEl.textContent.trim() : "";
+      const artist = artistEl ? artistEl.textContent.trim() : "";
+
+      const query = artist ? `${title} ${artist}`.trim() : title;
+      searchAndPlay(query);
+    });
+  });
+
   function handleTrackClick(event) {
     const button = event.target.closest(".track-btn");
     if (button) {
+      // Prevent double-handling the same click (e.g. double-clicks)
+      if (button.dataset.busy === "1") {
+        return;
+      }
+      button.dataset.busy = "1";
+
       event.stopPropagation();
       const card = button.closest(".duu");
       const trackId = card.dataset.trackId; // Use the stored trackId from data attribute
@@ -325,6 +388,7 @@ if (searchInput && resultsContainer) {
         const isNowSaved = toggleSavedTrack(track);
         button.classList.toggle("saved", isNowSaved);
         button.title = isNowSaved ? "Remove from saved" : "Save track";
+        updateNavCounts();
         // Refresh the current view if in saved section
         if (savedTracksSection && savedTracksSection.style.display !== "none") {
           renderSavedTracks();
@@ -335,11 +399,16 @@ if (searchInput && resultsContainer) {
         button.title = isNowFavorited
           ? "Remove from favorites"
           : "Add to favorites";
+        updateNavCounts();
         // Refresh the current view if in favorites section
         if (favoritesSection && favoritesSection.style.display !== "none") {
           renderFavoriteTracks();
         }
       }
+      // Small timeout so quick double-clicks don't toggle twice
+      setTimeout(() => {
+        button.dataset.busy = "0";
+      }, 250);
       return;
     }
 
@@ -530,7 +599,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to show section
   function showSection(sectionName) {
     // Hide all sections
-    if (searchResultsSection) searchResultsSection.style.display = "none";
+    // For search, we rely on the is-visible class (controlled by search logic),
+    // so just remove it instead of forcing inline display styles.
+    if (searchResultsSection)
+      searchResultsSection.classList.remove("is-visible");
     if (savedTracksSection) savedTracksSection.style.display = "none";
     if (favoritesSection) favoritesSection.style.display = "none";
 
@@ -538,7 +610,8 @@ document.addEventListener("DOMContentLoaded", () => {
     navItems.forEach((item) => item.classList.remove("active"));
 
     if (sectionName === "home") {
-      if (searchResultsSection) searchResultsSection.style.display = "block";
+      // On Home we do not force search results visible;
+      // Hip-hop / Popular artists static sections remain as main content.
       if (homeNav) homeNav.classList.add("active");
     } else if (sectionName === "saved") {
       if (savedTracksSection) savedTracksSection.style.display = "block";
@@ -549,6 +622,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (favoritesNav) favoritesNav.classList.add("active");
       renderFavoriteTracks();
     }
+
+    // Keep nav counts in sync whenever section changes
+    updateNavCounts();
   }
 
   // Add click listeners to navigation
@@ -564,4 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show home section by default
   showSection("home");
+
+  // Initial nav counts on load
+  updateNavCounts();
 });

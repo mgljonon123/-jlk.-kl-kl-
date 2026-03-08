@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,7 +11,8 @@ export default {
   entry: {
     index: "./src/index.js",
     home: "./src/pages/home/home.js",
-    login: "./src/pages/about/login.js", // ← "login" болгох
+    login: "./src/pages/about/login.js",
+    sign: "./src/pages/sign/sign.js",
     "music-library": "./src/pages/home/music-library.js",
   },
   output: {
@@ -34,7 +36,21 @@ export default {
     new HtmlWebpackPlugin({
       template: "./src/pages/about/login.html",
       filename: "login.html",
-      chunks: ["index", "login"], // ← "login" болгох
+      chunks: ["index", "login"],
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/pages/sign/sign.html",
+      filename: "sign.html",
+      chunks: ["index", "sign"],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src", "img"),
+          to: "img",
+          noErrorOnMissing: true,
+        },
+      ],
     }),
   ],
   devServer: {

@@ -1,31 +1,33 @@
-// h3 tag (Continue товч) -ийг сонгож байна
-const continueBtn = document.querySelector("h3");
+import "./sign.css";
 
-// .ner class-тай div-ийг сонгож байна
+const continueBtn = document.querySelector("h3");
 const input = document.querySelector(".ner");
 
-// .ner div-ийн дотор input field байгаа тул нэмэлтээр үүсгэх шаардлагагүй
-// оронд нь зөвхөн input-ыг ашиглана
-// (гэрэлтэл харуулахын тулд CSS-д үзэмжийг тохируулна)
+// Basic email validation: must contain @ and be at least 5 chars
+function isValidEmail(value) {
+  return value.includes("@") && value.length >= 5;
+}
 
-// Continue товч дээр дарахад ажиллах функц
+// Create account - Continue button
 continueBtn.addEventListener("click", function () {
-  // input-ийн утгыг авч байна
-  const value = input.querySelector("input").value;
+  const value = input.querySelector("input").value.trim();
 
-  // Хоосон байвал анхааруулга өгнө
   if (value === "") {
-    alert("Email эсвэл username оруулна уу!");
-    return; // Цааш үргэлжлэхгүй
+    alert("Please enter your email or username!");
+    return;
   }
 
-  // @ тэмдэг байхгүй бөгөөд 3 тэмдэгтээс богино бол буруу гэж үзнэ
-  if (value === "erdenedelgeruranbayr95@gmail.com") {
-    alert(value + " - бүртгэл амжилттай!");
-    return; // Цааш үргэлжлэхгүй
+  if (isValidEmail(value)) {
+    // Success - redirect to home
+    window.location.href = "home.html";
   } else {
-    alert("Bruu gmail baina!");
+    alert("Please enter a valid email address!");
   }
+});
 
-  // Дээрх шалгалтуудыг давсан бол амжилттай гэж үзнэ
+// Allow Enter key to submit
+input.querySelector("input").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    continueBtn.click();
+  }
 });
